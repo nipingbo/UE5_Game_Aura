@@ -4,6 +4,8 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
+
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -37,6 +39,72 @@ void AAuraPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
 }
 
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
+	
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	LastActor = CurrentActor;
+	CurrentActor = CursorHit.GetActor();
+
+	/**
+	 * Line trace from cursor. There are several scenarios:
+	 *  A. LastActor is null && CurrentActor is null
+	 *		- Do nothing
+	 *	B. LastActor is null && CurrentActor is valid
+	 *		- Highlight ThisActor
+	 *	C. LastActor is valid && CurrentActor is null
+	 *		- UnHighlight LastActor
+	 *	D. Both actors are valid, but LastActor != CurrentActor
+	 *		- UnHighlight LastActor, and Highlight CurrentActor
+	 *	E. Both actors are valid, and are the same actor
+	 *		- Do nothing
+	 */
+	if (LastActor == nullptr)
+	{
+		if (CurrentActor != nullptr)
+		{
+			//case B
+			CurrentActor->HighLightActor();
+		}
+		else
+		{
+			//case A do nothing
+		}
+	}
+	else
+	{
+		if (CurrentActor == nullptr)
+		{
+			//case C
+			LastActor->UnHightLightActor();
+		}
+		else
+		{
+			if (LastActor != CurrentActor)
+			{
+				//case D
+				CurrentActor->HighLightActor();
+				LastActor->UnHightLightActor();
+			}
+			else
+			{
+				//case E do nothing
+			}
+		}
+	}
+	
+}
+
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 {
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
@@ -52,3 +120,5 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 }
+
+
