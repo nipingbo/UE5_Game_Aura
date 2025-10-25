@@ -86,7 +86,7 @@ void AAuraPlayerController::CursorTrace()
 		if (CurrentActor == nullptr)
 		{
 			//case C
-			LastActor->UnHightLightActor();
+			LastActor->UnHighLightActor();
 		}
 		else
 		{
@@ -94,7 +94,7 @@ void AAuraPlayerController::CursorTrace()
 			{
 				//case D
 				CurrentActor->HighLightActor();
-				LastActor->UnHightLightActor();
+				LastActor->UnHighLightActor();
 			}
 			else
 			{
