@@ -19,9 +19,13 @@ void AAuraPlayerController::BeginPlay()
 	check(AuraContext);
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);
-
-	Subsystem->AddMappingContext(AuraContext, 0);
+	//check(Subsystem) if we use check(Subsystem) statement here, it is not correct
+	//Because in the multiplayer, on client machine, other clients' Subsystem could be null
+	
+	if (Subsystem)
+	{
+		Subsystem->AddMappingContext(AuraContext, 0);
+	}
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 
