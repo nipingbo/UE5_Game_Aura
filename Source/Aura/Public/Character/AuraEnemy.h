@@ -24,5 +24,6 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
 	/*End of Enemy Interface*/
 	protected:
 	virtual void BeginPlay() override;
+	virtual void InitAbilityActorInfo() override;
 	
 };
