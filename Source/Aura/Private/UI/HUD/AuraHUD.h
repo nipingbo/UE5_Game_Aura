@@ -1,55 +1,61 @@
-#pragma once
+#include "UI/HUD/AuraHUD.h"
 
-#include "CoreMinimal.h"
-#include "GameFramework/HUD.h"
-#include "AuraHUD.generated.h"
+#include "Blueprint/UserWidget.h"
+#include "UI/Widget/AuraUserWidget.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 
-class UUserWidget;
-class UAuraUserWidget;
-class UOverlayWidgetController;
-class APlayerController;
-class APlayerState;
-class UAbilitySystemComponent;
-class UAttributeSet;
-struct FWidgetControllerParams;
-
-UCLASS()
-class AURA_API AAuraHUD : public AHUD
+UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
 {
-    GENERATED_BODY()
+	// 如果之前已创建 controller，则更新参数（以防止 controller 使用过时的数据）
+	if (OverlayWidgetController == nullptr)
+	{
+		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
+		OverlayWidgetController->SetWidgetControllerParams(WCParams);
+		OverlayWidgetController->BindCallbacksToDependencies();
+		return OverlayWidgetController;
+	}
 
-public:
-    AAuraHUD();
+	// 已存在的 controller 也要刷新参数（确保在多次 InitOverlay 调用时使用最新参数）
+	OverlayWidgetController->SetWidgetControllerParams(WCParams);
+	return OverlayWidgetController;
+}
 
-    UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WCParams);
+void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
+{
+	// 如果已经初始化过 Overlay，则直接返回，避免重复创建 widget / 绑定事件
+	if (bOverlayInitialized) return;
 
-    // 初始化 Overlay（角色层会调用）
-    void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS);
+	// 确认必需的 Blueprint 类已经在编辑器中设置
+	checkf(OverlayWidgetClass, TEXT("Overlay widget class uninitialized, please fill out BP_AuraHUD"));
+	checkf(OverlayWidgetControllerClass, TEXT("Overlay widget controller class uninitialized, please fill out BP_AuraHUD"));
 
-    // 查询是否已初始化（供外部判断）
-    bool IsOverlayInitialized() const { return bOverlayInitialized; }
+	// 使用 PC 作为 Outer 创建 widget（更合适于拥有者/网络上下文）
+	UUserWidget* Widget = CreateWidget<UUserWidget>(PC ? PC : GetWorld(), OverlayWidgetClass);
+	OverlayWidget = Cast<UAuraUserWidget>(Widget);
+	if (!OverlayWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AAuraHUD::InitOverlay: Failed to cast created widget to UAuraUserWidget"));
+		return;
+	}
 
-protected:
-    // Overlay Widget 的类（在编辑器中设置）
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UUserWidget> OverlayWidgetClass;
+	// 创建或获取 OverlayWidgetController，并传入参数
+	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
+	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
+	if (!WidgetController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AAuraHUD::InitOverlay: Failed to get or create OverlayWidgetController"));
+		return;
+	}
 
-    // Overlay Widget Controller 类
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
+	// 将 controller 关联到 widget（确保 widget 不为 nullptr）
+	OverlayWidget->SetWidgetController(WidgetController);
 
-private:
-    // Overlay Widget Controller 实例
-    UPROPERTY()
-    UOverlayWidgetController* OverlayWidgetController = nullptr;
+	// 广播初始值（让 controller 把当前数据推到 widget）
+	WidgetController->BroadcastInitialValues();
 
-    // Overlay Widget 实例
-    UPROPERTY()
-    UAuraUserWidget* OverlayWidget = nullptr;
+	// 将 widget 添加到视口
+	Widget->AddToViewport();
 
-    // 是否已经初始化过 Overlay（防重复创建）
-    bool bOverlayInitialized = false;
-
-    // 新增成员变量：标记 Overlay 是否已初始化
-    bool bOverlayInitialized = false;
-};
+	// 标记已初始化，避免重复创建
+	bOverlayInitialized = true;
+}
