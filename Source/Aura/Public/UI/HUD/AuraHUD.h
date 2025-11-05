@@ -20,6 +20,8 @@ class AURA_API AAuraHUD : public AHUD
 
 public:
 
+    AAuraHUD();
+
     UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WCParams);
 
     // 初始化 Overlay（角色层会调用）
