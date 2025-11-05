@@ -30,7 +30,7 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
     checkf(OverlayWidgetControllerClass, TEXT("Overlay widget controller class uninitialized, please fill out BP_AuraHUD"));
 
     // 使用 PC 作为 Outer 创建 widget（更合适于拥有者/网络上下文）
-    UUserWidget* Widget = CreateWidget<UUserWidget>(PC ? PC : GetWorld(), OverlayWidgetClass);
+    UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), OverlayWidgetClass);
     OverlayWidget = Cast<UAuraUserWidget>(Widget);
     if (!OverlayWidget)
     {

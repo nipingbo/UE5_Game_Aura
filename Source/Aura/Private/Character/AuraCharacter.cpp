@@ -54,7 +54,7 @@ void AAuraCharacter::InitAbilityActorInfo()
 
 	// 如果 ASC 已经对同一个 Owner/Avatar 初始化过，则跳过重复初始化
 	if (ASC->AbilityActorInfo
-		&& ASC->AbilityActorInfo->Owner == AuraPlayerState
+		&& ASC->AbilityActorInfo->OwnerActor == AuraPlayerState
 		&& ASC->AbilityActorInfo->AvatarActor == this)
 	{
 		// 仍然缓存指针以备后续使用

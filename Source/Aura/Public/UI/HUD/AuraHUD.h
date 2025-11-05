@@ -19,7 +19,6 @@ class AURA_API AAuraHUD : public AHUD
     GENERATED_BODY()
 
 public:
-    AAuraHUD();
 
     UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WCParams);
 
