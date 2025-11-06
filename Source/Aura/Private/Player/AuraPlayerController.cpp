@@ -5,6 +5,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "Player/AuraPlayerState.h"
+#include "UI/HUD/AuraHUD.h"
+#include "AbilitySystemComponent.h"
 
 
 AAuraPlayerController::AAuraPlayerController()
@@ -125,4 +128,26 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	}
 }
 
+void AAuraPlayerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	UE_LOG(LogTemp, Warning, TEXT("OnRep_PlayerState: PC=%s IsLocal=%d NetMode=%d PID=%u"), *GetNameSafe(this), IsLocalController() ? 1 : 0, (int)GetNetMode(), (uint32)FPlatformProcess::GetCurrentProcessId());
+
+	if (!IsLocalController()) return;
+
+	if (AAuraPlayerState* APS = GetPlayerState<AAuraPlayerState>())
+	{
+		if (APS->GetAbilitySystemComponent())
+		{
+			if (AAuraHUD* HUD = Cast<AAuraHUD>(GetHUD()))
+			{
+				HUD->InitOverlay(this, APS, APS->GetAbilitySystemComponent(), APS->GetAttributeSet());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("OnRep_PlayerState: ASC not yet valid on client, waiting for PlayerState OnRep"));
+		}
+	}
+}
 

@@ -20,11 +20,18 @@ public:
 	AAuraPlayerState();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 protected:
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_AbilitySystemComponent)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_AttributeSet)
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UFUNCTION()
+	void OnRep_AbilitySystemComponent();
+
+	UFUNCTION()
+	void OnRep_AttributeSet();
 };

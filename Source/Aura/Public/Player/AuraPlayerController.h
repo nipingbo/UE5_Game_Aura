@@ -25,6 +25,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 	virtual void PlayerTick(float DeltaTime) override;
+	virtual void OnRep_PlayerState() override;
 
 private:
 	UPROPERTY(EditAnywhere, Category="Input")
