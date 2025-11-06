@@ -9,6 +9,7 @@
 
 class UAbilitySystemComponent;
 class UAttributeSet;
+
 /**
  * 
  */
@@ -22,9 +23,19 @@ public:
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 	
 protected:
-	UPROPERTY()
+	// 被复制到客户端后触发回调（客户端在收到指针时会调用）
+	UPROPERTY(ReplicatedUsing = OnRep_AbilitySystemComponent)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_AttributeSet)
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UFUNCTION()
+	void OnRep_AbilitySystemComponent();
+
+	UFUNCTION()
+	void OnRep_AttributeSet();
+
+	// replication
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

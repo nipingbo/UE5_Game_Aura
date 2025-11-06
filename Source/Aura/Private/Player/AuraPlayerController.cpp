@@ -5,6 +5,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "Player/AuraPlayerState.h"
+#include "UI/HUD/AuraHUD.h"
+#include "AbilitySystemComponent.h"
 
 
 AAuraPlayerController::AAuraPlayerController()
@@ -125,4 +128,45 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	}
 }
 
+void AAuraPlayerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	UE_LOG(LogTemp, Warning, TEXT("AAuraPlayerController::OnRep_PlayerState: PC=%s PS=%s IsLocal=%d NetMode=%d PID=%u"),
+		*GetNameSafe(this),
+		*GetNameSafe(PlayerState),
+		IsLocalController(),
+		(int)GetNetMode(),
+		(uint32)FPlatformProcess::GetCurrentProcessId());
+
+	if (!IsLocalController())
+	{
+		return;
+	}
+
+	AAuraPlayerState* APS = Cast<AAuraPlayerState>(PlayerState);
+	if (!APS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AAuraPlayerController::OnRep_PlayerState: PlayerState is not AAuraPlayerState"));
+		return;
+	}
+
+	UAbilitySystemComponent* ASC = APS->GetAbilitySystemComponent();
+	if (ASC)
+	{
+		if (AAuraHUD* HUD = Cast<AAuraHUD>(GetHUD()))
+		{
+			HUD->InitOverlay(this, APS, ASC, APS->GetAttributeSet());
+			UE_LOG(LogTemp, Warning, TEXT("AAuraPlayerController::OnRep_PlayerState: Called HUD->InitOverlay"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("AAuraPlayerController::OnRep_PlayerState: HUD not ready yet"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AAuraPlayerController::OnRep_PlayerState: ASC not ready yet, waiting for PlayerState OnRep"));
+	}
+}
 
