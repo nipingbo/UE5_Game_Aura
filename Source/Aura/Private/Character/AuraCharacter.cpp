@@ -64,5 +64,5 @@ void AAuraCharacter::InitAbilityActorInfo()
 		}
 	}
 	//initialize primary attributes
-	InitializePrimaryAttributes();
+	InitializeDefaultAttributes();
 }
