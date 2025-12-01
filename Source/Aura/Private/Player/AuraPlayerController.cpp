@@ -13,7 +13,6 @@
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
-
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
@@ -82,60 +81,17 @@ void AAuraPlayerController::AutoRun()
 
 void AAuraPlayerController::CursorTrace()
 {
-	FHitResult CursorHit;
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit) return;
 
 	LastActor = CurrentActor;
 	CurrentActor = CursorHit.GetActor();
 
-	/**
-	 * Line trace from cursor. There are several scenarios:
-	 *  A. LastActor is null && CurrentActor is null
-	 *		- Do nothing
-	 *	B. LastActor is null && CurrentActor is valid
-	 *		- Highlight ThisActor
-	 *	C. LastActor is valid && CurrentActor is null
-	 *		- UnHighlight LastActor
-	 *	D. Both actors are valid, but LastActor != CurrentActor
-	 *		- UnHighlight LastActor, and Highlight CurrentActor
-	 *	E. Both actors are valid, and are the same actor
-	 *		- Do nothing
-	 */
-	if (LastActor == nullptr)
+	if (LastActor != CurrentActor)
 	{
-		if (CurrentActor != nullptr)
-		{
-			//case B
-			CurrentActor->HighLightActor();
-		}
-		else
-		{
-			//case A do nothing
-		}
+		if (LastActor) LastActor->UnHighLightActor(); 
+		if (CurrentActor) CurrentActor->HighLightActor();
 	}
-	else
-	{
-		if (CurrentActor == nullptr)
-		{
-			//case C
-			LastActor->UnHighLightActor();
-		}
-		else
-		{
-			if (LastActor != CurrentActor)
-			{
-				//case D
-				CurrentActor->HighLightActor();
-				LastActor->UnHighLightActor();
-			}
-			else
-			{
-				//case E do nothing
-			}
-		}
-	}
-	
 }
 
 void AAuraPlayerController::AbilityInputTagPressed(const FGameplayTag InputTag)
@@ -167,7 +123,7 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 	}
 	else
 	{
-		APawn* ControlledPawn = GetPawn();
+		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
@@ -176,7 +132,7 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 				for (const FVector& PointLoc : NavPath->PathPoints)
 				{
 					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
-					DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
+					//DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
 				}
 				CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
 				bAutoRunning = true;
@@ -209,10 +165,10 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 	{
 		//move
 		FollowTime += GetWorld()->GetDeltaSeconds();
-		FHitResult Hit;
-		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+		
+		if (CursorHit.bBlockingHit)
 		{
-			CachedDestination = Hit.ImpactPoint;
+			CachedDestination = CursorHit.ImpactPoint;
 		}
 
 		if (APawn* ControlledPawn = GetPawn())
