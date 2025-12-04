@@ -18,6 +18,6 @@ void UAuraAssetManager::StartInitialLoading()
 	Super::StartInitialLoading();
 	FAuraGameplayTags::InitializeNativeGameplayTags();
 	//important step to initialize ability system globals
-	//this is required to use Target Data
+	//this is required to use Target Daata
 	UAbilitySystemGlobals::Get().InitGlobalData();	
 }
