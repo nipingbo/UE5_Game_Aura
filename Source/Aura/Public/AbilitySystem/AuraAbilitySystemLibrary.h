@@ -7,6 +7,7 @@
 #include "Data/CharacterClassInfo.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
+struct FGameplayEffectContextHandle;
 class UAbilitySystemComponent;
 class UAttributeMenuWidgetController;
 class UOverlayWidgetController;
@@ -32,4 +33,20 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|CharacterClassDefaults")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category="AuraAbilitySystemLibrary|GameplayEffects")
+	static bool IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category="AuraAbilitySystemLibrary|GameplayEffects")
+	static bool IsCritialHit(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|GameplayEffects")
+	//UPARAM(ref) to tell UE5 engine, the EffectContextHandle parameter is a “Input" pin
+	//the UE5 engine treat none const parameter as a "Output" pin
+	static void SetIsBlockedHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit);
+
+	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|GameplayEffects")
+	static void SetIsCritialHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCritialHit);
+
+	
 };
