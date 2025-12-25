@@ -25,10 +25,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	if (CombatInterface)
 	{
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+		FRotator ProjectileRotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+		ProjectileRotation.Pitch = 0.0f;
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
-		FRotator ProjectileRotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-		ProjectileRotation.Pitch = 0.f;
 		SpawnTransform.SetRotation(ProjectileRotation.Quaternion());
 		
 		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
