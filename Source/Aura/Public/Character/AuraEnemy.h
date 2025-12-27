@@ -32,6 +32,11 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
 	/*Combat Interface*/
 	virtual int32 GetPlayerLevel() override;
 	virtual void Die() override;
+	//below two virtual functions can be set as "override" is because
+	//in the EnemyInterface, SetCombatTarget and GetCombatTarget are set
+	//"BlueprintNativeEvent". 
+	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
+	virtual AActor* GetCombatTarget_Implementation() const override;
 	/*End of Combat Interface*/
 
 	UPROPERTY(BlueprintAssignable)
@@ -49,6 +54,9 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 5.f;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	TObjectPtr<AActor> CombatTarget;
 	
 	protected:
 	virtual void BeginPlay() override;
