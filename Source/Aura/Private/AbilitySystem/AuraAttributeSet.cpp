@@ -10,6 +10,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/AuraLogChannels.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/AuraPlayerController.h"
@@ -161,8 +162,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 			const bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
-			const bool bCritialHit = UAuraAbilitySystemLibrary::IsCritialHit(Props.EffectContextHandle);
-			ShowFloatingText(Props, LocalIncomingDamage, bBlockedHit, bCritialHit);
+			const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCritialHit(Props.EffectContextHandle);
+			ShowFloatingText(Props, LocalIncomingDamage, bBlockedHit, bCriticalHit);
 		}
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
@@ -170,6 +171,11 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.f);
 		//UE_LOG(LogAura, Log, TEXT("Incoming XP: %f"), LocalIncomingXP);
+		//TODO: see if we should leve up
+		if (Props.SourceCharacter->Implements<UPlayerInterface>())
+		{
+			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
+		}
 	}
 }
 
