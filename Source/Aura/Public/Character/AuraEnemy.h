@@ -29,7 +29,7 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
 	/*End of Enemy Interface*/
 
 	/*Combat Interface*/
-	virtual int32 GetPlayerLevel() override;
+	virtual int32 GetPlayerLevel_Implementation() override;
 	virtual void Die() override;
 	//below two virtual functions can be set as "override" is because
 	//in the EnemyInterface, SetCombatTarget and GetCombatTarget are set
