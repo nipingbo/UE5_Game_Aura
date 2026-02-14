@@ -108,7 +108,7 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemCo
 	//Get information about all given abilities, look up their ability info and broadcast it to widgets
 	if (!AuraAbilitySystemComponent->bStartupAbilitiesGiven) return;
 
-	FForEachAblity BroadcastDelegate;
+	FForEachAbility BroadcastDelegate;
 	BroadcastDelegate.BindLambda( [this, AuraAbilitySystemComponent](const FGameplayAbilitySpec& AbilitySpec) 
 	{
 		FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoByTag(AuraAbilitySystemComponent->GetAbilityTagFromSpec(AbilitySpec));
