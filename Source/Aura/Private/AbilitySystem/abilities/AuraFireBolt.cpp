@@ -2,7 +2,6 @@
 
 
 #include "AbilitySystem/abilities/AuraFireBolt.h"
-#include "AuraGameplayTags.h"
 
 FString UAuraFireBolt::GetDescription(int32 Level)
 {
