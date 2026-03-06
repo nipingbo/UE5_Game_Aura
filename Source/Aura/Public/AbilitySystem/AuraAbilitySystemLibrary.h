@@ -65,7 +65,7 @@ public:
 	static float GetDebuffFrequency(const FGameplayEffectContextHandle& EffectContextHandle);
 	
 	UFUNCTION(BlueprintPure, Category="AuraAbilitySystemLibrary|GameplayEffects")
-	static FGameplayTag GetDebuffType(const FGameplayEffectContextHandle& EffectContextHandle);
+	static FGameplayTag GetDamageType(const FGameplayEffectContextHandle& EffectContextHandle);
 
 	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|GameplayEffects")
 	//UPARAM(ref) to tell UE5 engine, the EffectContextHandle parameter is a “Input" pin

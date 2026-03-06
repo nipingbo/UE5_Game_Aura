@@ -199,7 +199,7 @@ float UAuraAbilitySystemLibrary::GetDebuffFrequency(const FGameplayEffectContext
 	return 0.f;
 }
 
-FGameplayTag UAuraAbilitySystemLibrary::GetDebuffType(const FGameplayEffectContextHandle& EffectContextHandle)
+FGameplayTag UAuraAbilitySystemLibrary::GetDamageType(const FGameplayEffectContextHandle& EffectContextHandle)
 {
 	if (const FAuraGameplayEffectContext* AuraGameplayEffectContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
