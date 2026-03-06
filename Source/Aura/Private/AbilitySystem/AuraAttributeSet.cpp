@@ -204,10 +204,14 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props)
 	Effect->Period = DebuffFrequency;
 	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
 	
-	FInheritedTagContainer TagContainer = FInheritedTagContainer();
-	UTargetTagsGameplayEffectComponent& Component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
-	TagContainer.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
-	Component.SetAndApplyTargetTagChanges(TagContainer);
+	//FInheritedTagContainer TagContainer = FInheritedTagContainer();
+	//UTargetTagsGameplayEffectComponent& Component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
+	//TagContainer.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	//TagContainer..AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	//Component.SetAndApplyTargetTagChanges(TagContainer);
+	Effect->CachedGrantedTags.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	//Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	Effect->StackLimitCount = 1 ;
 	
