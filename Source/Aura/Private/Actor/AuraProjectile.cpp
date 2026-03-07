@@ -64,23 +64,23 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (DamageEffectParams.SourceAbilitySystemComponent == nullptr) return; 
-	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
-	if (SourceAvatarActor == OtherActor) return;
-
-	if (!UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor)) return;
-
+	// If we've already hit something
 	if (bHit) return;
-	
+	// If we are running on the client and the Instigator has not been set yet, we can't trust the client to not hit something they shouldn't, so we wait until the server has set the Instigator before allowing overlaps to trigger hits
+	if (!HasAuthority() && GetInstigator() == nullptr) return;
+	// If the OtherActor is the same as the Instigator, ignore the overlap. This can happen when the projectile is spawned and the Instigator is overlapping the spawn location
+	if (OtherActor == GetInstigator()) return;
+	AActor* SourceAvatarActor = (DamageEffectParams.SourceAbilitySystemComponent) 
+								? DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor() 
+								: GetInstigator();
+	if (SourceAvatarActor && !UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor))
+	{
+		return;
+	}
 	bHit = true;
 	OnHit();
-	
 	Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	
-	//if (!bHit)
-	//{
-	//	OnHit();
-	//}
+	AURA_SCREEN_DEBUG(TEXT("Overlap Triggered on: %s"), HasAuthority() ? TEXT("Server") : TEXT("Client"));
 	if (HasAuthority())
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
@@ -90,10 +90,6 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		}
 		Destroy();
 	}
-	/*else
-	{
-		bHit = true;
-	}*/
 }
 
 
