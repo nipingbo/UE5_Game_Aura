@@ -30,7 +30,7 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
 
 	/*Combat Interface*/
 	virtual int32 GetPlayerLevel_Implementation() override;
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 	//below two virtual functions can be set as "override" is because
 	//in the EnemyInterface, SetCombatTarget and GetCombatTarget are set
 	//"BlueprintNativeEvent". 

@@ -80,11 +80,13 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	bHit = true;
 	OnHit();
 	Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	AURA_SCREEN_DEBUG(TEXT("Overlap Triggered on: %s"), HasAuthority() ? TEXT("Server") : TEXT("Client"));
+	//AURA_SCREEN_DEBUG(TEXT("Overlap Triggered on: %s"), HasAuthority() ? TEXT("Server") : TEXT("Client"));
 	if (HasAuthority())
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
+			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
+			DamageEffectParams.DeathImpulse = DeathImpulse;
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
 			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
