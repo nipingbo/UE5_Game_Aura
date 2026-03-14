@@ -14,6 +14,7 @@
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
 #include "UI/WidgetController/AuraWidgetController.h"
+#include "Algo/Sort.h"
 
 bool UAuraAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject,
 	FWidgetControllerParams& OutWCParams, AAuraHUD*& OutAuraHUD)
@@ -326,6 +327,54 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldC
 				OutOverlappingActors.AddUnique(ICombatInterface::Execute_GetAvatar(Overlap.GetActor()));
 			}
 		}
+	}
+}
+
+void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray<AActor*>& Actors,
+	TArray<AActor*>& OutClosestTargets, const FVector& Origin)
+{
+	/*if (Actors.Num() <= MaxTargets)
+	{
+		OutClosestTargets = Actors;
+		return;
+	}
+	TArray<AActor*> SortedActors = Actors;
+	int32 NumTargetsFound = 0;
+	while (NumTargetsFound < MaxTargets)
+	{
+		if (ActorsToCheck.Num() == 0) break;
+		double ClosestDistance = TNumericLimits<double>::Max();
+		AActor* ClosestActor;
+		for (AActor* PotentialTarget : ActorsToCheck)
+		{
+			const double Distance = (PotentialTarget->GetActorLocation() - Origin).Length();
+			if (Distance < ClosestDistance)
+			{
+				ClosestDistance = Distance;
+				ClosestActor = PotentialTarget;
+			}
+		}
+		ActorsToCheck.Remove(ClosestActor);
+		OutClosestTargets.AddUnique(ClosestActor);
+		NumTargetsFound++;
+	}*/
+	
+	if (Actors.Num() == 0) return;
+
+	TArray<AActor*> SortedActors = Actors;
+
+	// 使用 Algo::Sort
+	Algo::Sort(SortedActors, [&Origin](const AActor* A, const AActor* B) {
+		return FVector::DistSquared(A->GetActorLocation(), Origin) < 
+			   FVector::DistSquared(B->GetActorLocation(), Origin);
+	});
+
+	// 填充结果
+	OutClosestTargets.Empty(MaxTargets);
+	const int32 Count = FMath::Min(MaxTargets, SortedActors.Num());
+	for (int32 i = 0; i < Count; ++i)
+	{
+		OutClosestTargets.Add(SortedActors[i]);
 	}
 }
 
