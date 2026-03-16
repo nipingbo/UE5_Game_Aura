@@ -43,6 +43,8 @@ public:
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override; 
 	virtual FOnDeath& GetOnDeathDelegate() override;
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
+	virtual void SetIsBeingShocked_Implementation(bool bInShock) override;
+	virtual bool IsBeingShocked_Implementation() const override;
 	/** end Combat Interface */
 	
 	FOnASCRegistered OnASCRegistered;
@@ -59,6 +61,9 @@ public:
 	
 	UPROPERTY(ReplicatedUsing=OnRep_Burned, BlueprintReadOnly, Category = "Combat")
 	bool bIsBurned = false;
+	
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Combat")
+	bool bIsBeingShocked = false;
 
 	UFUNCTION()
 	virtual void OnRep_Stunned();
