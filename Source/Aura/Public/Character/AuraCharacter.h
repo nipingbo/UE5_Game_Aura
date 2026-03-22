@@ -35,9 +35,11 @@ public:
 	virtual void AddToSpellPoints_Implementation(int32 InSpellPoints) override;
 	virtual int32 GetAttributePoints_Implementation() const override;
 	virtual int32 GetSpellPoints_Implementation() const override;
-	/* End of Combat Interface */
+	virtual void ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial = nullptr) override;
+	virtual void HideMagicCircle_Implementation() override;
+	/* End of Player Interface */
 	
-	/* Player Interface */
+	/* Combat Interface */
 	virtual int32 GetPlayerLevel_Implementation() override;
 	/* End of Combat Interface */
 	
