@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
+class AMagicCircle;
 class UDamageTextComponent;
 class UAuraInputConfig;
 class UInputComponent;
@@ -29,7 +30,12 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCritialHit);
-
+	
+	UFUNCTION(BlueprintCallable)
+	void ShowMagicCircle();
+	
+	UFUNCTION(BlueprintCallable)
+	void HideMagicCircle();
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -87,4 +93,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponent;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AMagicCircle> MagicCircleClass;
+	
+	UPROPERTY()
+	TObjectPtr<AMagicCircle> MagicCircle;
+	
+	void UpdateMagicCircleLocation();
 };
