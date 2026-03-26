@@ -46,6 +46,9 @@ AAuraCharacterBase::AAuraCharacterBase()
 	ManaSiphonNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("ManaSiphonNiagaraComponent");
 	ManaSiphonNiagaraComponent->SetupAttachment(EffectAttachComponent);
 
+	GetCapsuleComponent()->SetReceivesDecals(false);
+	GetMesh()->SetReceivesDecals(false);
+	Weapon->SetReceivesDecals(false);
 }
 
 void AAuraCharacterBase::Tick(float DeltaTime)
