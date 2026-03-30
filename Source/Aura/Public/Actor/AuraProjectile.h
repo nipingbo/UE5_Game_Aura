@@ -45,14 +45,15 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> Sphere;
-
+	
+	bool IsValidOverlap(AActor* OtherActor) const;
+	bool bHit = false;
+	
 private:
 	UPROPERTY(EditDefaultsOnly)
 	float LifeSpan = 10.f;
 	
-	bool bHit = false;
-	
-		UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> ImpactEffect;
 
 	UPROPERTY(EditAnywhere)
