@@ -3,13 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MVVMViewModelBase.h"
+#include "MVVM_LoadScreen.generated.h"
 
 /**
  * 
  */
-class AURA_API MVVM_LoadScreen
+UCLASS()
+class AURA_API UMVVM_LoadScreen : public UMVVMViewModelBase
 {
+	GENERATED_BODY()
 public:
-	MVVM_LoadScreen();
-	~MVVM_LoadScreen();
+	
+	UPROPERTY(BlueprintReadWrite, FieldNotify)
+	float Opacity = 1;
+	
 };
