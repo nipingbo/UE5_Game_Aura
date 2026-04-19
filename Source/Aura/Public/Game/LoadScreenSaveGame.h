@@ -141,6 +141,7 @@ public:
 	UPROPERTY()
 	TArray<FSavedAbility> SavedAbilities;
 	
+	UPROPERTY()
 	TArray<FSavedMap> SavedMaps;
 	
 	FSavedMap GetSavedMapWithMapName(const FString& InMapName);
