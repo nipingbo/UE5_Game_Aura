@@ -43,13 +43,22 @@ void ACheckpoint::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 			AuraGameMode->SaveWorldState(GetWorld());
 		}
 		IPlayerInterface::Execute_SaveProgress(OtherActor, PlayerStartTag);
-		HandleGlowEffect();
+		if (!bReached)
+		{
+			HandleGlowEffect();
+		}
 	}
 }
 
+void ACheckpoint::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+}
+
+
 void ACheckpoint::HandleGlowEffect()
 {
-	Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(CheckpointMesh->GetMaterial(0), this);
 	CheckpointMesh->SetMaterial(0, DynamicMaterialInstance);
 	CheckpointReached(DynamicMaterialInstance);
@@ -59,4 +68,5 @@ void ACheckpoint::BeginPlay()
 {
 	Super::BeginPlay();
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnSphereOverlap);
+	Sphere->OnComponentEndOverlap.AddDynamic(this, &ACheckpoint::OnSphereEndOverlap);
 }

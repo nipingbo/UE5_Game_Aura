@@ -36,6 +36,14 @@ protected:
 		const FHitResult& SweepResult
 	);
 	
+	UFUNCTION()
+	virtual void OnSphereEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex
+	);
+	
 	virtual void BeginPlay() override;
 	
 	UFUNCTION(BlueprintImplementableEvent)
