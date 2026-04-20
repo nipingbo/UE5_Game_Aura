@@ -27,6 +27,7 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface, p
 	/*Hightlight Interface*/
 	virtual void HighlightActor_Implementation() override;
 	virtual void UnHighlightActor_Implementation() override;
+	virtual void SetMoveToLocation_Implementation(FVector& OutDestination) override;
 	/*End of Hightlight Interface*/
 
 	/*Combat Interface*/
