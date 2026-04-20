@@ -37,7 +37,6 @@ void ACheckpoint::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 {
 	if (OtherActor->Implements<UPlayerInterface>())
 	{
-		bReached = true;
 		if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
 		{
 			AuraGameMode->SaveWorldState(GetWorld());
@@ -46,6 +45,7 @@ void ACheckpoint::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		if (!bReached)
 		{
 			HandleGlowEffect();
+			bReached = true;
 		}
 	}
 }

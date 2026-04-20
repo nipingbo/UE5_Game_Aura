@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
+class IHighlightInterface;
 class AMagicCircle;
 class UDamageTextComponent;
 class UAuraInputConfig;
@@ -58,8 +59,8 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 	void CursorTrace();
 
-	TScriptInterface<IEnemyInterface> LastActor;
-	TScriptInterface<IEnemyInterface> CurrentActor;
+	IHighlightInterface* LastActor;
+	IHighlightInterface* CurrentActor;
 	FHitResult CursorHit;
 
 	void AbilityInputTagPressed(const FGameplayTag InputTag);
