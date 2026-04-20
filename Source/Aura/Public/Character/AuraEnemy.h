@@ -25,8 +25,8 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface, p
 	virtual void PossessedBy(AController* NewController) override;
 
 	/*Hightlight Interface*/
-	virtual void HighLightActor() override;
-	virtual void UnHighLightActor() override;
+	virtual void HighlightActor_Implementation() override;
+	virtual void UnHighlightActor_Implementation() override;
 	/*End of Hightlight Interface*/
 
 	/*Combat Interface*/

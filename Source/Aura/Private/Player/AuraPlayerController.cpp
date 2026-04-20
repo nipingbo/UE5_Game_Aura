@@ -135,8 +135,8 @@ void AAuraPlayerController::CursorTrace()
 {
 	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
 	{
-		if (LastActor) LastActor->UnHighLightActor(); 
-		if (CurrentActor) CurrentActor->UnHighLightActor();
+		UnHighlightActor(LastActor); 
+		UnHighlightActor(CurrentActor);
 		LastActor = nullptr;
 		CurrentActor = nullptr;
 		return;
@@ -145,12 +145,35 @@ void AAuraPlayerController::CursorTrace()
 	if (!CursorHit.bBlockingHit) return;
 
 	LastActor = CurrentActor;
-	CurrentActor = Cast<IHighlightInterface>(CursorHit.GetActor());
+	if (IsValid(CursorHit.GetActor()) && CursorHit.GetActor()->Implements<UHighlightInterface>())
+	{
+		CurrentActor = CursorHit.GetActor();
+	}
+	else
+	{
+		CurrentActor = nullptr;
+	}
 
 	if (LastActor != CurrentActor)
 	{
-		if (LastActor) LastActor->UnHighLightActor(); 
-		if (CurrentActor) CurrentActor->HighLightActor();
+		UnHighlightActor(LastActor); 
+		HighlightActor(CurrentActor);
+	}
+}
+
+void AAuraPlayerController::HighlightActor(AActor* InActor)
+{
+	if (IsValid(InActor) && InActor->Implements<UHighlightInterface>())
+	{
+		IHighlightInterface::Execute_HighlightActor(InActor);
+	}
+}
+
+void AAuraPlayerController::UnHighlightActor(AActor* InActor)
+{
+	if (IsValid(InActor) && InActor->Implements<UHighlightInterface>())
+	{
+		IHighlightInterface::Execute_UnHighlightActor(InActor);
 	}
 }
 
@@ -162,7 +185,15 @@ void AAuraPlayerController::AbilityInputTagPressed(const FGameplayTag InputTag)
 	}
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		bTargeting = CurrentActor ? true : false;
+		if (IsValid(CurrentActor))
+		{
+			TargetingStatus = CurrentActor->Implements<UHighlightInterface>() ? ETargetingStatus::TargetingEnemy : ETargetingStatus::TargetingNonEnemy;
+			bAutoRunning = false;
+		}
+		else
+		{
+			TargetingStatus = ETargetingStatus::NotTargeting;
+		}
 		bAutoRunning = false;
 	}
 	if (GetASC())
@@ -188,7 +219,7 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 
 	if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 
-	if (!bTargeting && !bShiftKeyDown)
+	if (TargetingStatus != ETargetingStatus::TargetingEnemy && !bShiftKeyDown)
 	{
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
@@ -213,7 +244,7 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 			}
 		}
 		FollowTime = 0.f;
-		bTargeting = false;
+		TargetingStatus = ETargetingStatus::NotTargeting;
 	}
 }
 
@@ -232,7 +263,7 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 		return;
 	}
 
-	if (bTargeting || bShiftKeyDown)
+	if (TargetingStatus == ETargetingStatus::TargetingEnemy || bShiftKeyDown)
 	{
 		if (GetASC())
 		{
