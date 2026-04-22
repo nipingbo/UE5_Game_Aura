@@ -67,7 +67,10 @@ void ACheckpoint::HandleGlowEffect()
 void ACheckpoint::BeginPlay()
 {
 	Super::BeginPlay();
-	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnSphereOverlap);
+	if (bBindOverlapCallback)
+	{
+		Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnSphereOverlap);
+	}
 	//Sphere->OnComponentEndOverlap.AddDynamic(this, &ACheckpoint::OnSphereEndOverlap);
 }
 
