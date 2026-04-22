@@ -69,7 +69,7 @@ void AAuraCharacter::LoadProgress()
 	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameMode->GetGameInstance());
 	if (AuraGameMode)
 	{
-		ULoadScreenSaveGame* SaveData = AuraGameMode->RetirveInGameSaveData();
+		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
 		if (SaveData == nullptr) return;
 		
 		if (SaveData->bFirstTimeLoadIn)
@@ -225,7 +225,7 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameMode->GetGameInstance());
 	if (AuraGameMode)
 	{
-		ULoadScreenSaveGame* SaveData = AuraGameMode->RetirveInGameSaveData();
+		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
 		if (SaveData == nullptr) return;
 		
 		SaveData->PlayerStartTag = CheckpointTag;
