@@ -74,6 +74,8 @@ public:
 	UFUNCTION()
 	virtual void OnRep_Stunned();
 	
+	void SetCharacterClass(ECharacterClass InClass) { CharacterClass = InClass; }
+	
 	UFUNCTION()
 	virtual void OnRep_Burned();
 protected:

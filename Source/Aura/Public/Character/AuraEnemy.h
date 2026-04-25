@@ -57,6 +57,7 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface, p
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 	TObjectPtr<AActor> CombatTarget;
 	
+	void SetLevel(int32 InLevel) { Level = InLevel; }
 	protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
